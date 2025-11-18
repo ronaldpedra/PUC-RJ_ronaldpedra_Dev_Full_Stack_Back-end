@@ -8,6 +8,7 @@ from sqlalchemy_utils import database_exists, create_database
 
 # Importando elementos definidos no modelo
 from models.base import Base
+from models.ativos import Ativo
 
 
 DB_PATH = 'database/'  # Não poderia ser instance como no flask-SQLAlchemy?

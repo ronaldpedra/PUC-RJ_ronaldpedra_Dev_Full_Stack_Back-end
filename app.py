@@ -3,9 +3,12 @@
 from flask_openapi3 import OpenAPI, Info, Tag
 from flask import redirect
 
+from sqlalchemy.exc import IntegrityError
+
 from flask_cors import CORS
 
-from models import *
+from models import Session, Ativo
+from schemas import *
 
 
 info = Info(title='DashInvest', version='1.0.0')
@@ -24,7 +27,31 @@ def home():
     return redirect('/openapi')
 
 
-# @app.post('/adicionar_ativo', tags=[adicionar_ativo_tag], responses={'200': AtivoViewSchema, '409': ErrorSchema, '400': ErrorSchema})
+@app.post('/adicionar_ativo', tags=[adicionar_ativo_tag], \
+          responses={'200': AtivoViewSchema, '409': ErrorSchema, \
+                     '400': ErrorSchema})
+def add_ativo(form: AtivoSchema):
+    """Adiciona um Ativo à base de dados e retorna uma representação do Ativo"""
+    ativo = Ativo(
+        ticker=form.ticker,
+        nome=form.nome,
+        classe_b3=form.classe_b3
+        )
+
+    try:
+        session = Session()
+        session.add(ativo)
+        session.commit()
+        return apresentar_ativo(ativo), 200
+
+    except IntegrityError:
+        error_msg = 'Ativo com o mesmo Ticker já cadastrado'
+        return {'message': error_msg}, 409
+
+    except Exception:
+        error_msg = 'Não foi possível salvar o Ativo.'
+        return {'message': error_msg}
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
