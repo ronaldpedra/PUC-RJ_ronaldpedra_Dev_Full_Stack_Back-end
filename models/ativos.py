@@ -9,4 +9,5 @@ class Ativo(Base):
     __tablename__ = 'ativo'
 
     ticker = Column(String(10), primary_key=True)
-    nome
+    nome = Column(String(60))
+
