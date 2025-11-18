@@ -20,6 +20,9 @@ Siga os passos abaixo para configurar e executar o projeto localmente.
 
     ```bash
     gh repo clone ronaldpedra/PUC-RJ_ronaldpedra_Dev_Full_Stack_Back-end
+    ```
+
+    ```bash
     cd PUC-RJ_ronaldpedra_Dev_Full_Stack_Back-end
     ```
 
