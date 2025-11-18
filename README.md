@@ -54,5 +54,9 @@ Siga os passos abaixo para configurar e executar o projeto localmente.
 
     *(Adicione aqui o comando para iniciar sua aplicação. Exemplo abaixo para Flask)*
     ```bash
+    set FLASK_APP=app.py
+    ```
+
+    ```bash
     flask run
     ```
