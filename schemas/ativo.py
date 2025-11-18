@@ -1,6 +1,5 @@
 """Esquema de representação de Ativos"""
-from typing import Optional, Union
-from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel
 
 from models.ativos import Ativo
