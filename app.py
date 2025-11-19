@@ -17,7 +17,10 @@ CORS(app)
 
 # definindo tags
 home_tag = Tag(name='Documentação', description='Documentação da API DashInvest - Swagger')
-adicionar_ativo_tag = Tag(name='Adicionar Ativo', description='Adiciona ao banco de dados um novo ativo')
+adicionar_ativo_tag = Tag(name='Adicionar Ativo', \
+                          description='Adiciona ao Banco de Dados um novo ativo')
+ativos_tag = Tag(name='Listar Ativos', \
+                 description='Listas os Ativos cadastrados no Banco de Dados')
 
 
 # Rota home que direciona para a documentação da API DashInvest
@@ -51,6 +54,20 @@ def add_ativo(form: AtivoSchema):
     except Exception:
         error_msg = 'Não foi possível salvar o Ativo.'
         return {'message': error_msg}
+
+
+@app.get('/ativos', tags=[ativos_tag], \
+         responses={'200': ListarAtivosSchema, '404': ErrorSchema})
+def get_ativos():
+    """Retorna todos os Ativos cadastrados no Banco de Dados"""
+    session = Session()
+    ativos = session.query(Ativo).all()
+
+    if not ativos:
+        return {'ativos': []}, 200
+
+    print(ativos)
+    return apresentar_ativos(ativos), 200
 
 
 if __name__ == '__main__':

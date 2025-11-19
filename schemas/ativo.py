@@ -1,5 +1,5 @@
 """Esquema de representação de Ativos"""
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel
 
 from models.ativos import Ativo
@@ -25,3 +25,19 @@ def apresentar_ativo(ativo: Ativo):
         'nome': ativo.nome,
         'classe_b3': ativo.classe_b3
     }
+
+class ListarAtivosSchema(BaseModel):
+    """Define como uma listagem de Ativos será retornada"""
+    ativos:List[AtivoSchema]
+
+def apresentar_ativos(ativos: List[Ativo]):
+    """Retorna uma representação do Ativo seguindo o schema definido em 
+    AtivoViewSchema"""
+    result = []
+    for ativo in ativos:
+        result.append({
+            'ticker': ativo.ticker,
+            'nome': ativo.nome,
+            'classe_b3': ativo.classe_b3
+        })
+    return {'ativos': result}
