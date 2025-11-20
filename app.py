@@ -37,7 +37,8 @@ def add_ativo(form: AtivoSchema):
     """Adiciona um Ativo à base de dados e retorna uma representação do Ativo"""
     ativo = Ativo(
         ticker=form.ticker,
-        nome=form.nome,
+        short_name=form.short_name,
+        long_name=form.long_name,
         classe_b3=form.classe_b3
         )
 
@@ -66,7 +67,6 @@ def get_ativos():
     if not ativos:
         return {'ativos': []}, 200
 
-    print(ativos)
     return apresentar_ativos(ativos), 200
 
 
