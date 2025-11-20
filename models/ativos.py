@@ -1,8 +1,8 @@
 """Modelo dos Ativos cadastrados em DashInvest"""
 
-# from datetime import datetime
-from typing import Union
-from sqlalchemy import Column, String
+from datetime import datetime
+from typing import Optional, Union
+from sqlalchemy import Column, String, DateTime
 
 
 from models import Base
@@ -16,12 +16,13 @@ class Ativo(Base):
     short_name = Column(String(60))
     long_name = Column(String(120))
     classe_b3 = Column(String(10))
-    # data_insercao = Column(DateTime, default=datetime.now())
+    data_insercao = Column(DateTime, default=datetime.now())
 
 
-    def __init__(self, ticker: str, short_name: Union[str, None] = None,
-                 long_name: Union[str, None] = None,
-                 classe_b3: str = None):
+    def __init__(self, ticker: str, short_name: Optional[str] = None,
+                 long_name: Optional[str] = None,
+                 classe_b3: str = 'Ações',
+                 data_insercao:Union[DateTime, None] = None):
         """
         Cria um ativo
 
@@ -30,12 +31,13 @@ class Ativo(Base):
             short_name: Nome abreviado do ativo. Ex: PETROBRAS PN N2
             long_name: Nome completo do ativo. Ex: Petróleo Brasileiro S.A. - Petrobras
             classe_b3: Classe do ativo na B3. Ex: Ações
+            data_insercao: Data de inserção do ativo no banco
         """
         self.ticker = ticker
         self.short_name = short_name
         self.long_name = long_name
         self.classe_b3 = classe_b3
 
-        # Se não for informada, será o data exata da inserção no banco
-        # if data_insercao:
-        #     self.data_insercao = data_insercao
+        # Se não for informada, será a data exata da inserção no banco
+        if data_insercao:
+            self.data_insercao = data_insercao

@@ -3,12 +3,12 @@
 from flask_openapi3 import OpenAPI, Info, Tag
 from flask import redirect
 
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 from flask_cors import CORS
 
 from models import Session, Ativo
-from schemas import *
+import schemas
 
 
 info = Info(title='DashInvest', version='1.0.0')
@@ -31,9 +31,9 @@ def home():
 
 
 @app.post('/adicionar_ativo', tags=[adicionar_ativo_tag], \
-          responses={'200': AtivoViewSchema, '409': ErrorSchema, \
-                     '400': ErrorSchema})
-def add_ativo(form: AtivoSchema):
+          responses={'200': schemas.AtivoViewSchema, '409': schemas.ErrorSchema, \
+                     '400': schemas.ErrorSchema})
+def add_ativo(form: schemas.AtivoSchema):
     """Adiciona um Ativo à base de dados e retorna uma representação do Ativo"""
     ativo = Ativo(
         ticker=form.ticker,
@@ -41,24 +41,25 @@ def add_ativo(form: AtivoSchema):
         long_name=form.long_name,
         classe_b3=form.classe_b3
         )
-
     try:
         session = Session()
         session.add(ativo)
         session.commit()
-        return apresentar_ativo(ativo), 200
+        return schemas.apresentar_ativo(ativo), 200
 
     except IntegrityError:
         error_msg = 'Ativo com o mesmo Ticker já cadastrado'
         return {'message': error_msg}, 409
 
-    except Exception:
+    except SQLAlchemyError as e:
         error_msg = 'Não foi possível salvar o Ativo.'
-        return {'message': error_msg}
+        # Imprime o erro original no console para depuração
+        print(e)
+        return {'message': error_msg}, 500
 
 
 @app.get('/ativos', tags=[ativos_tag], \
-         responses={'200': ListarAtivosSchema, '404': ErrorSchema})
+         responses={'200': schemas.ListarAtivosSchema, '404': schemas.ErrorSchema})
 def get_ativos():
     """Retorna todos os Ativos cadastrados no Banco de Dados"""
     session = Session()
@@ -67,7 +68,7 @@ def get_ativos():
     if not ativos:
         return {'ativos': []}, 200
 
-    return apresentar_ativos(ativos), 200
+    return schemas.apresentar_ativos(ativos), 200
 
 
 if __name__ == '__main__':
