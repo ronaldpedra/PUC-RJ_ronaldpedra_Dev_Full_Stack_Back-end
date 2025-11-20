@@ -8,21 +8,24 @@ from models.ativos import Ativo
 class AtivoSchema(BaseModel):
     """Define como um novo Ativo inserido deve ser representado"""
     ticker: str = 'PETR4'
-    nome: Optional[str] = 'Petrobras'
+    short_name: Optional[str] = 'PETROBRAS PN N2'
+    long_name: Optional[str] = 'Petróleo Brasileiro S.A. - Petrobras'
     classe_b3: str = 'Ações'
     # data_insercao: Union[datetime, None] = None
 
 class AtivoViewSchema(BaseModel):
     """Define como será retornado o Ativo"""
     ticker: str = 'PETR4'
-    nome: Optional[str] = 'Petrobras'
+    short_name: Optional[str] = 'PETROBRAS PN N2'
+    long_name: Optional[str] = 'Petróleo Brasileiro S.A. - Petrobras'
     classe_b3: str = 'Ações'
 
 def apresentar_ativo(ativo: Ativo):
     """Retorna uma representação do Ativo"""
     return {
         'ticker': ativo.ticker,
-        'nome': ativo.nome,
+        'short_name': ativo.short_name,
+        'long_name': ativo.long_name,
         'classe_b3': ativo.classe_b3
     }
 
@@ -37,7 +40,8 @@ def apresentar_ativos(ativos: List[Ativo]):
     for ativo in ativos:
         result.append({
             'ticker': ativo.ticker,
-            'nome': ativo.nome,
+            'short_name': ativo.short_name,
+            'long_name': ativo.long_name,
             'classe_b3': ativo.classe_b3
         })
     return {'ativos': result}

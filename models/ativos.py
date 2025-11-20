@@ -13,24 +13,27 @@ class Ativo(Base):
     __tablename__ = 'ativo'
 
     ticker = Column(String(10), primary_key=True)
-    nome = Column(String(60))
+    short_name = Column(String(60))
+    long_name = Column(String(120))
     classe_b3 = Column(String(10))
     # data_insercao = Column(DateTime, default=datetime.now())
 
 
-    def __init__(self, ticker: str, nome: Union[str, None] = None,
+    def __init__(self, ticker: str, short_name: Union[str, None] = None,
+                 long_name: Union[str, None] = None,
                  classe_b3: str = None):
         """
         Cria um ativo
 
         Arguments:
             ticker: Código do ativo na B3. Ex: PETR4
-            nome: Nome do ativo. Ex: Petrobras
+            short_name: Nome abreviado do ativo. Ex: PETROBRAS PN N2
+            long_name: Nome completo do ativo. Ex: Petróleo Brasileiro S.A. - Petrobras
             classe_b3: Classe do ativo na B3. Ex: Ações
-            data_insercao: Data de quando o ativo foi inserido à base
         """
         self.ticker = ticker
-        self.nome = nome
+        self.short_name = short_name
+        self.long_name = long_name
         self.classe_b3 = classe_b3
 
         # Se não for informada, será o data exata da inserção no banco
