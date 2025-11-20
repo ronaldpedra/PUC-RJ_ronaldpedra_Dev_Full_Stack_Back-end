@@ -14,6 +14,13 @@ class AtivoSchema(BaseModel):
     long_name: Optional[str] = 'Petróleo Brasileiro S.A. - Petrobras'
     classe_b3: ClasseAtivoEnum = ClasseAtivoEnum.ACOES
 
+class AtivoUpdateSchema(BaseModel):
+    """Define os campos que podem ser atualizados em um Ativo"""
+    short_name: Optional[str] = None
+    long_name: Optional[str] = None
+    classe_b3: Optional[ClasseAtivoEnum] = None
+
+
 class AtivoViewSchema(BaseModel):
     """Define como será retornado o Ativo"""
     ticker: str = 'PETR4'
