@@ -16,6 +16,7 @@ class AtivoSchema(BaseModel):
 
 class AtivoUpdateSchema(BaseModel):
     """Define os campos que podem ser atualizados em um Ativo"""
+    ticker: Optional[str] = None
     short_name: Optional[str] = None
     long_name: Optional[str] = None
     classe_b3: Optional[ClasseAtivoEnum] = None

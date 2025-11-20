@@ -78,7 +78,7 @@ def get_ativos():
 
 
 @app.patch('/ativos', tags=[ativo_update_tag], \
-           responses={'200': schemas.AtivoViewSchema, '404': schemas.ErrorSchema, \
+           responses={'200': schemas.AtivoViewSchema, '404': schemas.ErrorSchema, '409': schemas.ErrorSchema, \
                       '400': schemas.ErrorSchema})
 def update_ativo(query: schemas.AtivoBuscaSchema, form: schemas.AtivoUpdateSchema):
     """Atualiza um Ativo existente no Banco de Dados.
@@ -108,6 +108,10 @@ def update_ativo(query: schemas.AtivoBuscaSchema, form: schemas.AtivoUpdateSchem
     try:
         session.commit()
         return schemas.apresentar_ativo(ativo), 200
+    except IntegrityError:
+        error_msg = 'Já existe um ativo com o ticker informado.'
+        return {'message': error_msg}, 409
+
     except SQLAlchemyError as e:
         error_msg = 'Não foi possível atualizar o Ativo.'
         print(e)
