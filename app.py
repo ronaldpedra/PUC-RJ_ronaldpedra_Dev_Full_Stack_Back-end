@@ -119,7 +119,6 @@ def update_ativo(query: schemas.AtivoBuscaSchema, form: schemas.AtivoUpdateSchem
 def delete_ativo(query: schemas.AtivoBuscaSchema):
     """Exclui um Ativo do Banco de Dados"""
     ticker = unquote(unquote(query.ticker))
-    print(ticker)
 
     session = Session()
     ativo = session.query(Ativo).filter(Ativo.ticker == ticker).first()
