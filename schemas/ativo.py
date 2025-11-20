@@ -20,7 +20,22 @@ class AtivoViewSchema(BaseModel):
     short_name: Optional[str] = 'PETROBRAS PN N2'
     long_name: Optional[str] = 'Petróleo Brasileiro S.A. - Petrobras'
     classe_b3: ClasseAtivoEnum = ClasseAtivoEnum.ACOES
-    data_insercao: datetime = datetime.now()
+    data_insercao: datetime
+
+class ListarAtivosSchema(BaseModel):
+    """Define como uma listagem de Ativos será retornada"""
+    ativos:List[AtivoViewSchema]
+
+class AtivoDeleteSchema(BaseModel):
+    """Define como deve ser a estrutura do dado retornado após uma requisição
+    de remoção"""
+    message: str
+    ticker: str
+
+class AtivoBuscaSchema(BaseModel):
+    """Define como deve ser a estrutura que representa a busca, que será
+    feita apenas com base no ticker do ativo."""
+    ticker: str = 'PETR4'
 
 def apresentar_ativo(ativo: Ativo):
     """Retorna uma representação do Ativo"""
@@ -31,10 +46,6 @@ def apresentar_ativo(ativo: Ativo):
         'classe_b3': ativo.classe_b3,
         'data_insercao': ativo.data_insercao
     }
-
-class ListarAtivosSchema(BaseModel):
-    """Define como uma listagem de Ativos será retornada"""
-    ativos:List[AtivoViewSchema]
 
 def apresentar_ativos(ativos: List[Ativo]):
     """Retorna uma representação do Ativo seguindo o schema definido em 

@@ -2,6 +2,7 @@
 
 from flask_openapi3 import OpenAPI, Info, Tag
 from flask import redirect
+from urllib.parse import unquote
 
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
@@ -21,6 +22,8 @@ adicionar_ativo_tag = Tag(name='Adicionar Ativo', \
                           description='Adiciona ao Banco de Dados um novo ativo')
 ativos_tag = Tag(name='Listar Ativos', \
                  description='Listas os Ativos cadastrados no Banco de Dados')
+ativo_delete_tag = Tag(name='Excluir Ativo', \
+                       description='Exclui um Ativo do Banco de Dados')
 
 
 # Rota home que direciona para a documentação da API DashInvest
@@ -30,7 +33,8 @@ def home():
     return redirect('/openapi')
 
 
-@app.post('/adicionar_ativo', tags=[adicionar_ativo_tag], \
+# Métodos para manipular ATIVO
+@app.post('/ativos', tags=[adicionar_ativo_tag], \
           responses={'200': schemas.AtivoViewSchema, '409': schemas.ErrorSchema, \
                      '400': schemas.ErrorSchema})
 def add_ativo(form: schemas.AtivoSchema):
@@ -58,6 +62,7 @@ def add_ativo(form: schemas.AtivoSchema):
         return {'message': error_msg}, 500
 
 
+# Métodos para manipular ATIVOS
 @app.get('/ativos', tags=[ativos_tag], \
          responses={'200': schemas.ListarAtivosSchema, '404': schemas.ErrorSchema})
 def get_ativos():
@@ -69,6 +74,25 @@ def get_ativos():
         return {'ativos': []}, 200
 
     return schemas.apresentar_ativos(ativos), 200
+
+
+@app.delete('/ativos', tags=[ativo_delete_tag], \
+            responses={'200': schemas.AtivoDeleteSchema, '404': schemas.ErrorSchema})
+def delete_ativo(query: schemas.AtivoBuscaSchema):
+    """Exclui um Ativo do Banco de Dados"""
+    ticker = unquote(unquote(query.ticker))
+    print(ticker)
+
+    session = Session()
+    ativo = session.query(Ativo).filter(Ativo.ticker == ticker).first()
+
+    if ativo:
+        session.delete(ativo)
+        session.commit()
+        return {'message': 'Ativo removido', 'ticker': ativo.ticker}
+    else:
+        error_msg = 'Ativo não encontrado na base de dados'
+        return {'message': error_msg}, 404
 
 
 if __name__ == '__main__':

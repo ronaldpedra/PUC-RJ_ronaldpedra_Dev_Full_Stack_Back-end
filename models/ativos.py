@@ -16,7 +16,7 @@ class Ativo(Base):
     short_name = Column(String(60))
     long_name = Column(String(120))
     classe_b3 = Column(Enum(ClasseAtivoEnum))
-    data_insercao = Column(DateTime, default=datetime.now())
+    data_insercao = Column(DateTime, default=datetime.now)
 
 
     def __init__(self, ticker: str, short_name: str = None,
