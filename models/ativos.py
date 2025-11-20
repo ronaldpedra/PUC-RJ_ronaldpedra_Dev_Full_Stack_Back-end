@@ -1,10 +1,10 @@
 """Modelo dos Ativos cadastrados em DashInvest"""
 
 from datetime import datetime
-from typing import Optional, Union
-from sqlalchemy import Column, String, DateTime
+from typing import Union
+from sqlalchemy import Column, String, DateTime, Enum
 
-
+from models.enums import ClasseAtivoEnum
 from models import Base
 
 
@@ -15,13 +15,13 @@ class Ativo(Base):
     ticker = Column(String(10), primary_key=True)
     short_name = Column(String(60))
     long_name = Column(String(120))
-    classe_b3 = Column(String(10))
+    classe_b3 = Column(Enum(ClasseAtivoEnum))
     data_insercao = Column(DateTime, default=datetime.now())
 
 
-    def __init__(self, ticker: str, short_name: Optional[str] = None,
-                 long_name: Optional[str] = None,
-                 classe_b3: str = 'Ações',
+    def __init__(self, ticker: str, short_name: str = None,
+                 long_name: str = None,
+                 classe_b3: ClasseAtivoEnum = ClasseAtivoEnum.ACOES,
                  data_insercao:Union[DateTime, None] = None):
         """
         Cria um ativo

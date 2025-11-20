@@ -39,7 +39,7 @@ def add_ativo(form: schemas.AtivoSchema):
         ticker=form.ticker,
         short_name=form.short_name,
         long_name=form.long_name,
-        classe_b3=form.classe_b3
+        classe_b3=form.classe_b3 # Pydantic já converteu a string para o Enum
         )
     try:
         session = Session()

@@ -4,6 +4,7 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 from models.ativos import Ativo
+from models.enums import ClasseAtivoEnum
 
 
 class AtivoSchema(BaseModel):
@@ -11,14 +12,14 @@ class AtivoSchema(BaseModel):
     ticker: str = 'PETR4'
     short_name: Optional[str] = 'PETROBRAS PN N2'
     long_name: Optional[str] = 'Petróleo Brasileiro S.A. - Petrobras'
-    classe_b3: str = 'Ações'
+    classe_b3: ClasseAtivoEnum = ClasseAtivoEnum.ACOES
 
 class AtivoViewSchema(BaseModel):
     """Define como será retornado o Ativo"""
     ticker: str = 'PETR4'
     short_name: Optional[str] = 'PETROBRAS PN N2'
     long_name: Optional[str] = 'Petróleo Brasileiro S.A. - Petrobras'
-    classe_b3: str = 'Ações'
+    classe_b3: ClasseAtivoEnum = ClasseAtivoEnum.ACOES
     data_insercao: datetime = datetime.now()
 
 def apresentar_ativo(ativo: Ativo):
