@@ -10,7 +10,7 @@ import schemas
 
 # Define a tag para o recurso Ativo
 ativo_tag = Tag(
-    name='Ativo', 
+    name='Ativo',
     description='Operações relacionadas a Ativos: adição, listagem, \
         atualização e exclusão.')
 

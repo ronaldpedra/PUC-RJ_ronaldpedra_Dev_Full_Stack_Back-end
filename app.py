@@ -7,6 +7,8 @@ from flask import redirect
 from flask_cors import CORS
 
 from routes.ativo import api as ativo_api
+from routes.movimentacao import api as movimentacao_api
+
 
 # Informações da API
 info = Info(title='DashInvest', version='1.0.0')
@@ -19,6 +21,7 @@ home_tag = Tag(name='Documentação',
 
 # Registra o blueprint de Ativos na aplicação principal
 app.register_api(ativo_api)
+app.register_api(movimentacao_api)
 
 
 # Rota home que direciona para a documentação da API DashInvest
