@@ -4,15 +4,14 @@ from pydantic import BaseModel
 
 from models.movimentacao import Movimentacao
 
-
-class MovimentacaoSchema(BaseModel):
-    """Define como uma nova Movimentação deve ser representada"""
-    id: int = 1
-    data_registro: str = '2025-11-20 04:24:36.531165'
+class MovimentacaoPostSchema(BaseModel):
+    """Define como uma nova Movimentação deve ser representada ao ser criada"""
     movimento: str = 'Compra'
     ticker: str = 'PETR4'
     quantidade: int = 100
     valor: float = 34.21
+    preco_medio: float = 34.21
+    valor_total: float = 3421.00
 
 class MovimentacaoViewSchema(BaseModel):
     """Define como uma Movimentação será retornada"""
@@ -22,6 +21,8 @@ class MovimentacaoViewSchema(BaseModel):
     ticker: str = 'PETR4'
     quantidade: int = 100
     valor: float = 34.21
+    preco_medio: float = 34.21
+    valor_total: float = 3421.00
 
 class ListarMovimentacoesSchema(BaseModel):
     """Define como uma listagem de Movimentações será retornada"""
@@ -35,7 +36,9 @@ def apresentar_movimentacao(movimentacao: Movimentacao):
         'movimento': movimentacao.movimento,
         'ticker': movimentacao.ticker,
         'quantidade': movimentacao.quantidade,
-        'valor': movimentacao.valor
+        'valor': movimentacao.valor,
+        'preco_medio': movimentacao.preco_medio,
+        'valor_total': movimentacao.valor_total
     }
 
 def apresentar_movimentacoes(movimentacoes: List[Movimentacao]):
@@ -47,6 +50,8 @@ def apresentar_movimentacoes(movimentacoes: List[Movimentacao]):
         'movimento': m.movimento,
         'ticker': m.ticker,
         'quantidade': m.quantidade,
-        'valor': m.valor
+        'valor': m.valor,
+        'preco_medio': m.preco_medio,
+        'valor_total': m.valor_total
     } for m in movimentacoes]
     return {'movimentacoes': result}
