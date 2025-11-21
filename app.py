@@ -1,8 +1,10 @@
 """ Api DashInvest"""
 
-from flask_openapi3 import OpenAPI, Info, Tag
-from flask import redirect
 from urllib.parse import unquote
+from flask_openapi3.models.tag import Tag
+from flask_openapi3.models.info import Info
+from flask_openapi3.openapi import OpenAPI
+from flask import redirect
 
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
@@ -17,14 +19,15 @@ app = OpenAPI(__name__, info=info)
 CORS(app)
 
 # definindo tags
-home_tag = Tag(name='Documentação', description='Documentação da API DashInvest - Swagger')
-adicionar_ativo_tag = Tag(name='Adicionar Ativo', \
+home_tag = Tag(name='Documentação',
+               description='Documentação da API DashInvest - Swagger')
+adicionar_ativo_tag = Tag(name='Adicionar Ativo',
                           description='Adiciona ao Banco de Dados um novo ativo')
-ativos_tag = Tag(name='Listar Ativos', \
+ativos_tag = Tag(name='Listar Ativos',
                  description='Listas os Ativos cadastrados no Banco de Dados')
-ativo_update_tag = Tag(name='Atualizar Ativo', \
-                        description='Atualiza um Ativo existente no Banco de Dados')
-ativo_delete_tag = Tag(name='Excluir Ativo', \
+ativo_update_tag = Tag(name='Atualizar Ativo',
+                       description='Atualiza um Ativo existente no Banco de Dados')
+ativo_delete_tag = Tag(name='Excluir Ativo',
                        description='Exclui um Ativo do Banco de Dados')
 
 
@@ -36,8 +39,8 @@ def home():
 
 
 # Métodos para manipular ATIVOS
-@app.post('/ativos', tags=[adicionar_ativo_tag], \
-          responses={'200': schemas.AtivoViewSchema, '409': schemas.ErrorSchema, \
+@app.post('/ativos', tags=[adicionar_ativo_tag],
+          responses={'200': schemas.AtivoViewSchema, '409': schemas.ErrorSchema,
                      '400': schemas.ErrorSchema})
 def add_ativo(form: schemas.AtivoSchema):
     """Adiciona um Ativo à base de dados e retorna uma representação do Ativo"""
@@ -45,8 +48,8 @@ def add_ativo(form: schemas.AtivoSchema):
         ticker=form.ticker,
         short_name=form.short_name,
         long_name=form.long_name,
-        classe_b3=form.classe_b3 # Pydantic já converteu a string para o Enum
-        )
+        classe_b3=form.classe_b3  # Pydantic já converteu a string para o Enum
+    )
     try:
         session = Session()
         session.add(ativo)
@@ -64,7 +67,7 @@ def add_ativo(form: schemas.AtivoSchema):
         return {'message': error_msg}, 500
 
 
-@app.get('/ativos', tags=[ativos_tag], \
+@app.get('/ativos', tags=[ativos_tag],
          responses={'200': schemas.ListarAtivosSchema, '404': schemas.ErrorSchema})
 def get_ativos():
     """Retorna todos os Ativos cadastrados no Banco de Dados"""
@@ -77,8 +80,8 @@ def get_ativos():
     return schemas.apresentar_ativos(ativos), 200
 
 
-@app.patch('/ativos', tags=[ativo_update_tag], \
-           responses={'200': schemas.AtivoViewSchema, '404': schemas.ErrorSchema, '409': schemas.ErrorSchema, \
+@app.patch('/ativos', tags=[ativo_update_tag],
+           responses={'200': schemas.AtivoViewSchema, '404': schemas.ErrorSchema, '409': schemas.ErrorSchema,
                       '400': schemas.ErrorSchema})
 def update_ativo(query: schemas.AtivoBuscaSchema, form: schemas.AtivoUpdateSchema):
     """Atualiza um Ativo existente no Banco de Dados.
@@ -118,7 +121,7 @@ def update_ativo(query: schemas.AtivoBuscaSchema, form: schemas.AtivoUpdateSchem
         return {'message': error_msg}, 500
 
 
-@app.delete('/ativos', tags=[ativo_delete_tag], \
+@app.delete('/ativos', tags=[ativo_delete_tag],
             responses={'200': schemas.AtivoDeleteSchema, '404': schemas.ErrorSchema})
 def delete_ativo(query: schemas.AtivoBuscaSchema):
     """Exclui um Ativo do Banco de Dados"""
