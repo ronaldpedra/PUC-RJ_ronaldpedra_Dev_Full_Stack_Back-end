@@ -31,7 +31,10 @@ def add_movimentacao(form: schemas.MovimentacaoPostSchema):
         quantidade = form.quantidade,
         valor = form.valor,
         preco_medio = form.preco_medio,
-        valor_total = form.valor_total
+        total_operacao = form.total_operacao,
+        total_investido = form.total_investido,
+        lucro_operacao = form.lucro_operacao,
+        lucro_investimento = form.lucro_investimento
     )
     try:
         session = Session()

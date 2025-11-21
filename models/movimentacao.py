@@ -18,4 +18,8 @@ class Movimentacao(Base):
     quantidade = Column(Integer, nullable=False)
     valor = Column(DECIMAL(10, 2), nullable=False)
     preco_medio = Column(DECIMAL(10, 2), nullable=False)
-    valor_total = Column(DECIMAL(10, 2), nullable=False)
+    
+    total_operacao = Column(DECIMAL(10, 2), nullable=False)
+    total_investido = Column(DECIMAL(10, 2), nullable=False)
+    lucro_operacao = Column(DECIMAL(10, 2), nullable=False)
+    lucro_investimento = Column(DECIMAL(10, 2), nullable=False)
