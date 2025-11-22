@@ -3,6 +3,7 @@
 from flask_openapi3.blueprint import APIBlueprint
 from flask_openapi3.models.tag import Tag
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import func
 
 from models import Session, Movimentacao
 import schemas
@@ -28,13 +29,14 @@ def add_movimentacao(form: schemas.MovimentacaoPostSchema):
     movimentacao = Movimentacao(
         movimento = form.movimento,
         ticker = form.ticker,
-        quantidade = form.quantidade,
+        qtd_operacao = form.qtd_operacao,
+        qtd_carteira = form.qtd_carteira,
         valor = form.valor,
         preco_medio = form.preco_medio,
         total_operacao = form.total_operacao,
         total_investido = form.total_investido,
-        lucro_operacao = form.lucro_operacao,
-        lucro_investimento = form.lucro_investimento
+        lucro_operacao = form.lucro_operacao, # TODO: calcular
+        lucro_investimento = form.lucro_investimento # TODO: calcular
     )
     try:
         session = Session()
@@ -44,5 +46,38 @@ def add_movimentacao(form: schemas.MovimentacaoPostSchema):
 
     except SQLAlchemyError as e:
         error_msg = 'Não foi possível salvar a Movimentação.'
+        print(e)
+        return {'message': error_msg}, 500
+
+
+@api.get('/carteira',
+         summary='Retorna a carteira de investimentos atual',
+         description='Retorna o último registro de cada ativo que já foi negociado, mesmo que a quantidade atual seja zero.',
+         responses={'200': schemas.ListarCarteiraSchema, '404': schemas.ErrorSchema})
+def get_carteira():
+    """Retorna a carteira de investimentos do usuário.
+
+    A carteira é composta pelo último registro de cada ativo (ticker),
+    independentemente da quantidade atual em custódia.
+    """
+    session = Session()
+
+    try:
+        # Subquery para encontrar o ID da última movimentação para cada ticker
+        latest_mov_subquery = session.query(
+            Movimentacao.ticker,
+            func.max(Movimentacao.id).label('max_id')
+        ).group_by(Movimentacao.ticker).subquery()
+
+        # Query para buscar as movimentações que correspondem aos IDs da subquery
+        carteira = session.query(Movimentacao).join(
+            latest_mov_subquery,
+            (Movimentacao.id == latest_mov_subquery.c.max_id)
+        ).all()
+
+        return schemas.apresentar_carteira(carteira), 200
+
+    except SQLAlchemyError as e:
+        error_msg = 'Erro ao buscar a carteira.'
         print(e)
         return {'message': error_msg}, 500

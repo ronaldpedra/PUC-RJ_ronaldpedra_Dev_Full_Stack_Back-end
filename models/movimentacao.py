@@ -15,10 +15,10 @@ class Movimentacao(Base):
     data_registro = Column(DateTime, default=datetime.now, nullable=False)
     movimento = Column(String(10), nullable=False)  # Compra ou Venda
     ticker = Column(String(10), ForeignKey('ativo.ticker'), nullable=False)
-    quantidade = Column(Integer, nullable=False)
+    qtd_operacao = Column(Integer, nullable=False)
+    qtd_carteira = Column(Integer, nullable=False)
     valor = Column(DECIMAL(10, 2), nullable=False)
     preco_medio = Column(DECIMAL(10, 2), nullable=False)
-    
     total_operacao = Column(DECIMAL(10, 2), nullable=False)
     total_investido = Column(DECIMAL(10, 2), nullable=False)
     lucro_operacao = Column(DECIMAL(10, 2), nullable=False)

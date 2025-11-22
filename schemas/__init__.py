@@ -4,5 +4,5 @@ from schemas.ativo import AtivoSchema, AtivoViewSchema, apresentar_ativo, \
     AtivoUpdateSchema
 from schemas.movimentacao_schema import MovimentacaoViewSchema, \
     apresentar_movimentacao, apresentar_movimentacoes, ListarMovimentacoesSchema, \
-        MovimentacaoPostSchema
+        MovimentacaoPostSchema, ListarCarteiraSchema, apresentar_carteira
 from schemas.error import ErrorSchema
