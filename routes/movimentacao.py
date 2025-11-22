@@ -29,28 +29,31 @@ api = APIBlueprint('movimentacao', __name__, url_prefix='/movimentacoes',
 def add_movimentacao(form: schemas.MovimentacaoPostSchema):
     """Adiciona uma Movimentação à base de dados e retorna uma 
     representação da Movimentação"""
-    movimentacao = Movimentacao(
-        movimento = form.movimento,
-        ticker = form.ticker,
-        qtd_operacao = form.qtd_operacao,
-        qtd_carteira = form.qtd_carteira,
-        valor = form.valor,
-        preco_medio = form.preco_medio,
-        total_operacao = form.total_operacao,
-        total_investido = form.total_investido,
-        lucro_operacao = form.lucro_operacao,
-        lucro_investimento = form.lucro_investimento
-    )
+    session = Session()
     try:
-        session = Session()
+        movimentacao = Movimentacao(
+            movimento = form.movimento,
+            ticker = form.ticker,
+            qtd_operacao = form.qtd_operacao,
+            qtd_carteira = form.qtd_carteira,
+            valor = form.valor,
+            preco_medio = form.preco_medio,
+            total_operacao = form.total_operacao,
+            total_investido = form.total_investido,
+            lucro_operacao = form.lucro_operacao,
+            lucro_investimento = form.lucro_investimento
+        )
         session.add(movimentacao)
         session.commit()
         return schemas.apresentar_movimentacao(movimentacao), 200
 
     except SQLAlchemyError as e:
+        session.rollback()
         error_msg = 'Não foi possível salvar a Movimentação.'
         print(e)
         return {'message': error_msg}, 500
+    finally:
+        session.close()
 
 
 @api.get('/carteira',
@@ -66,8 +69,8 @@ def get_carteira():
     independentemente da quantidade atual em custódia.
     """
     session = Session()
-
     try:
+
         # Subquery para encontrar o ID da última movimentação para cada ticker
         latest_mov_subquery = session.query(
             Movimentacao.ticker,
@@ -83,6 +86,9 @@ def get_carteira():
         return schemas.apresentar_carteira(carteira), 200
 
     except SQLAlchemyError as e:
+        session.rollback()
         error_msg = 'Erro ao buscar a carteira.'
         print(e)
         return {'message': error_msg}, 500
+    finally:
+        session.close()
