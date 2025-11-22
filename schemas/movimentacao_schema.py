@@ -3,6 +3,7 @@ from typing import List
 from pydantic import BaseModel
 
 from models.movimentacao import Movimentacao
+from models.enums import ClasseAtivoEnum
 
 class MovimentacaoPostSchema(BaseModel):
     """Define como uma nova Movimentação deve ser representada ao ser criada"""
@@ -33,13 +34,17 @@ class MovimentacaoViewSchema(BaseModel):
     lucro_operacao: float = 0.0
     lucro_investimento: float = 0.0
 
+class CarteiraViewSchema(MovimentacaoViewSchema):
+    """Define como um ativo na carteira será retornado, incluindo a classe B3."""
+    classe_b3: ClasseAtivoEnum = ClasseAtivoEnum.ACOES
+
 class ListarMovimentacoesSchema(BaseModel):
     """Define como uma listagem de Movimentações será retornada"""
     movimentacoes:List[MovimentacaoViewSchema]
 
 class ListarCarteiraSchema(BaseModel):
     """Define como uma listagem de Carteira será retornada"""
-    carteira:List[MovimentacaoViewSchema]
+    carteira:List[CarteiraViewSchema]
 
 def apresentar_movimentacao(movimentacao: Movimentacao):
     """Retorna uma representação da Movimentação"""
@@ -80,18 +85,6 @@ def apresentar_movimentacoes(movimentacoes: List[Movimentacao]):
 def apresentar_carteira(carteira: List[Movimentacao]):
     """Retorna uma representação da Movimentação seguindo o schema definido em 
     MovimentacaoViewSchema"""
-    result = [{
-        'id': ativo.id,
-        'data_registro': ativo.data_registro,
-        'movimento': ativo.movimento,
-        'ticker': ativo.ticker,
-        'qtd_operacao': ativo.qtd_operacao,
-        'qtd_carteira': ativo.qtd_carteira,
-        'valor': ativo.valor,
-        'preco_medio': ativo.preco_medio,
-        'total_operacao': ativo.total_operacao,
-        'total_investido': ativo.total_investido,
-        'lucro_operacao': ativo.lucro_operacao,
-        'lucro_investimento': ativo.lucro_investimento
-    } for ativo in carteira]
-    return {'carteira': result}
+    # A função agora recebe uma lista de dicionários, então o acesso é por chave.
+    # A lista já está no formato correto, então apenas a retornamos.
+    return {'carteira': carteira}

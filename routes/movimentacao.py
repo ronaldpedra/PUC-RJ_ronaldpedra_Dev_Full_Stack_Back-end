@@ -3,9 +3,9 @@
 from flask_openapi3.blueprint import APIBlueprint
 from flask_openapi3.models.tag import Tag
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import func
+from sqlalchemy import func, inspect
 
-from models import Session, Movimentacao
+from models import Session, Movimentacao, Ativo
 import schemas
 
 
@@ -77,12 +77,24 @@ def get_carteira():
             func.max(Movimentacao.id).label('max_id')
         ).group_by(Movimentacao.ticker).subquery()
 
-        # Query para buscar as movimentações que correspondem aos IDs da subquery
-        carteira = session.query(Movimentacao).join(
+        # Query para buscar as movimentações e a classe_b3 do ativo
+        # correspondentes aos IDs da subquery
+        results = session.query(Movimentacao, Ativo.classe_b3).join(
+            Ativo, Movimentacao.ticker == Ativo.ticker
+        ).join(
             latest_mov_subquery,
             (Movimentacao.id == latest_mov_subquery.c.max_id)
         ).all()
 
+        # Monta a resposta combinando os dados da movimentação e do ativo
+        carteira = []
+        for movimentacao, classe_b3 in results:
+            mov_dict = {c.key: getattr(movimentacao, c.key) for c in inspect(movimentacao).mapper.column_attrs}
+            mov_dict['classe_b3'] = classe_b3
+            carteira.append(mov_dict)
+
+        # A função apresentar_carteira agora espera a lista de dicionários
+        # e a retorna no formato correto.
         return schemas.apresentar_carteira(carteira), 200
 
     except SQLAlchemyError as e:
