@@ -41,7 +41,10 @@ class MovimentacaoViewSchema(BaseModel):
         from_attributes = True
 
 class CarteiraViewSchema(MovimentacaoViewSchema):
-    """Define como um ativo na carteira será retornado, incluindo a classe B3."""
+    """Define como um ativo na carteira será retornado.
+    
+    Herda todos os campos de MovimentacaoViewSchema e adiciona a classe B3 do ativo.
+    """
     classe_b3: ClasseAtivoEnum = ClasseAtivoEnum.ACOES
 
 class ListarMovimentacoesSchema(BaseModel):

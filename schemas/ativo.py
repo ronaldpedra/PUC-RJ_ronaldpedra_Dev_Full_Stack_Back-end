@@ -32,10 +32,10 @@ class ListarAtivosSchema(BaseModel):
 
 class AtivoUpdateSchema(BaseModel):
     """Define os campos que podem ser atualizados em um Ativo"""
-    ticker: Optional[str] = None
-    short_name: Optional[str] = None
-    long_name: Optional[str] = None
-    classe_b3: Optional[ClasseAtivoEnum] = None
+    ticker: Optional[str] = 'PETR3'
+    short_name: Optional[str] = 'PETROBRAS ON N2'
+    long_name: Optional[str] = 'Petróleo Brasileiro S.A. - Petrobras'
+    classe_b3: Optional[ClasseAtivoEnum] = 'Ações'
 
 class AtivoDeleteSchema(BaseModel):
     """Define como deve ser a estrutura do dado retornado após uma requisição
