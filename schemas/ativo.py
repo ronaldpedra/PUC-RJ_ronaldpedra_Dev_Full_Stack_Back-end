@@ -2,8 +2,6 @@
 from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel
-
-from models.ativos import Ativo
 from models.enums import ClasseAtivoEnum
 
 
@@ -21,6 +19,12 @@ class AtivoViewSchema(BaseModel):
     long_name: Optional[str] = 'Petróleo Brasileiro S.A. - Petrobras'
     classe_b3: ClasseAtivoEnum = ClasseAtivoEnum.ACOES
     data_insercao: datetime
+
+    class Config:
+        """Configuração que permite ao Pydantic criar o schema a partir de
+        atributos de um objeto (modo ORM), não apenas de dicionários.
+        """
+        from_attributes = True
 
 class ListarAtivosSchema(BaseModel):
     """Define como uma listagem de Ativos será retornada"""
@@ -43,25 +47,3 @@ class AtivoBuscaSchema(BaseModel):
     """Define como deve ser a estrutura que representa a busca, que será
     feita apenas com base no ticker do ativo."""
     ticker: str = 'PETR4'
-
-def apresentar_ativo(ativo: Ativo):
-    """Retorna uma representação do Ativo"""
-    return {
-        'ticker': ativo.ticker,
-        'short_name': ativo.short_name,
-        'long_name': ativo.long_name,
-        'classe_b3': ativo.classe_b3,
-        'data_insercao': ativo.data_insercao
-    }
-
-def apresentar_ativos(ativos: List[Ativo]):
-    """Retorna uma representação do Ativo seguindo o schema definido em 
-    AtivoViewSchema"""
-    result = [{
-        'ticker': a.ticker,
-        'short_name': a.short_name,
-        'long_name': a.long_name,
-        'classe_b3': a.classe_b3,
-        'data_insercao': a.data_insercao
-    } for a in ativos]
-    return {'ativos': result}
