@@ -84,7 +84,7 @@ Siga os passos abaixo para configurar e executar o projeto em seu ambiente de de
     ```bash
     # O modo debug irá recarregar o servidor automaticamente a cada alteração.
     set FLASK_APP=app.py
-    flask run --debug
+    flask run --host 0.0.0.0 --port 5000
     ```
 
 5.  **Acesse a API:**
